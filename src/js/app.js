@@ -1,9 +1,5 @@
-import './animate';
+
 import FullPagePaginator from './paginate';
-import './navigate';
-
-
-
 
 let fpS = new FullPagePaginator({
 

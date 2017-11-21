@@ -1,16 +1,5 @@
-// Прототип анимации для а1 - страница Карьреа
 
-// 1. создаем 4-5 экранов во всю высоту окна браузера
-// 2. биндим слушатель на скролл и вызываем фулпейдж прокрутку
-// 3. совершаем прокрутку
-// 4. добавить боковую навигация для перехода между экранами
-// 5. добавить анимацию для элементов 1го экрана
-// 6. добавить анимацию для элементов 2го экрана
-// 7. добавить анимацию для элементов 3го экрана
-// 8. добавить анимацию для элементов 4го экрана
-// 9. проверить, что из стека методы поступают в правильном порядке
 
-import PubSub from 'pubsub-js';
 
 
 export default class FullPagePaginator {
@@ -175,8 +164,6 @@ export default class FullPagePaginator {
     let delay=this.scroll.delay;
 
 
-    
-
     const throttled = self.throttle(scrollToSection, delay);
     window.addEventListener('wheel', throttled);
   
@@ -203,21 +190,120 @@ export default class FullPagePaginator {
 
       self.scroll.permission = false;
 
-      PubSub.publish('scrollToSection', {
+      self.animateTransitions();
+
+      self.section.current = self.section.next;
+      self.scroll.permission = true;
+
+    }
+   
+
+  }
+
+  animateTransitions() {
+
+    let self = this;
+
+
+    self.animateScroll({
+      from: self.section.current,
+      to: self.section.next,
+    });
+
+    if (self.nav.base) {
+      // console.log(self.nav.base);
+
+      self.animateNav({
+
         from: self.section.current,
         to: self.section.next,
         selector: self.nav.itemDataSelector
+
+      });
+    }
+
+   
+  }
+
+  animateScroll(data) {
+ 
+    let self=this;
+
+    let from = data.from;
+    let to = data.to;
+
+    let sections = [].slice.call(document.querySelectorAll('[data-scroll]'));
+
+    function filterSection(all, atr, value) {
+
+      let r = all.find(function(el) {
+
+        let elDataNumeral = +el.getAttribute(atr);
+
+        if (elDataNumeral === value) return true;
+
       });
 
-      self.section.current = self.section.next;
+      return r;
 
-      self.scroll.permission = true;
     }
-   
-   
+
+    let currentSection = filterSection(sections, 'data-scroll', from);
+
+    let nextSection = filterSection(sections, 'data-scroll', to);
+
+
+    // console.log(currentSection, nextSection);
+
+    self.animateFadeOut(currentSection);
+    self.animateFadeIn(nextSection);
 
 
   }
+
+  animateFadeOut(target) {
+  
+    target.classList.remove('is-active');
+
+  }
+  
+  animateFadeIn(target) {
+
+    target.classList.add('is-active');
+
+  }
+
+  animateNav(data) {
+
+    
+
+    let pagSelector = data.selector;
+
+    let pagLinks = [].slice.call(document.querySelectorAll(pagSelector));
+    //   console.log(pagLinks);
+
+    pagLinks.forEach(function(el) {
+
+      el.classList.remove('is-active');
+
+    });
+
+
+    let pagLinkActive = pagLinks.find(function(el) {
+
+      let elDataNumeral = +el.getAttribute('data-scroll-to');
+
+
+
+      if (elDataNumeral === data.to) return true;
+
+    });
+
+    pagLinkActive.classList.add('is-active');
+
+  }
+
+
 
   clickEvent() {
 
@@ -257,11 +343,7 @@ export default class FullPagePaginator {
 
         // console.log(self.section.next, self.section.current);
 
-        PubSub.publish('scrollToSection', {
-          from: self.section.current,
-          to: self.section.next,
-          selector: self.nav.itemDataSelector
-        });
+        self.animateTransitions();
 
         self.section.current = self.section.next;
 
@@ -274,6 +356,7 @@ export default class FullPagePaginator {
 
 
   }
+
 
 
 }
