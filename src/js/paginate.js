@@ -171,15 +171,20 @@ export default class FullPagePaginator {
 
 
     function scrollToSection(event) {
+      
       // console.log(self.scroll.permission);
       if (!self.scroll.permission) return;
 
       let current = self.section.current;
       let next = self.section.next;
       let amount = self.section.amount;
-      let direction = self.section.direction;
-
+      let direction = self.scroll.direction;
+      
       direction = event.deltaY > 0 ? 1 : -1;
+
+      self.scroll.direction=direction;
+
+      console.log(self.scroll.direction);
 
       next = current + direction;
       self.section.next = next;
@@ -254,22 +259,53 @@ export default class FullPagePaginator {
 
 
     // console.log(currentSection, nextSection);
+    let direction = self.scroll.direction;
 
-    self.animateFadeOut(currentSection);
-    self.animateFadeIn(nextSection);
+    self.animateFadeOut(currentSection,direction);
+    self.animateFadeIn(nextSection,direction);
 
-
-  }
-
-  animateFadeOut(target) {
-  
-    target.classList.remove('is-active');
 
   }
+
+  animateFadeOut(target, direction) {
+    console.log(direction);
+
+    if (direction > 0) {
+
+      target.style.top = '-100%';
+
+
+    } else if (direction < 0) {
+
+      target.style.top = '100%';
+
+
+    }
+
+    target.classList.toggle('is-active');
+    
+  }
   
-  animateFadeIn(target) {
+  animateFadeIn(target, direction) {
+
+    console.log(direction);
+
+    if (direction>0) {
+
+      target.style.top='0';
+
+
+    } else if (direction<0) {
+
+      target.style.top = '0';
+
+
+    }
+
 
     target.classList.add('is-active');
+    
+
 
   }
 
@@ -292,8 +328,6 @@ export default class FullPagePaginator {
     let pagLinkActive = pagLinks.find(function(el) {
 
       let elDataNumeral = +el.getAttribute('data-scroll-to');
-
-
 
       if (elDataNumeral === data.to) return true;
 
@@ -343,9 +377,33 @@ export default class FullPagePaginator {
 
         // console.log(self.section.next, self.section.current);
 
+        if (self.section.current > self.section.next) {
+
+
+          self.scroll.direction = -1;
+
+        } else {
+
+          self.scroll.direction = 1;
+
+        }
+
+        
+
+
+
+
+        
+
+
+
+
         self.animateTransitions();
 
+     
         self.section.current = self.section.next;
+
+        // console.log(self.section.next, self.section.current);
 
 
       }
