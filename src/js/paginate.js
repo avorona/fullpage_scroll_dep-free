@@ -98,6 +98,7 @@ export default class FullPagePaginator {
 
       let item = document.createElement('button');
       item.classList.add('pagination__item');
+      item.tabIndex= '2';
 
       list.appendChild(item);
     }
@@ -318,7 +319,7 @@ export default class FullPagePaginator {
     
   }
   
-  
+
   animateFadeIn(target, direction) {
    
     let self =this;
