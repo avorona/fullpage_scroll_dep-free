@@ -1,7 +1,3 @@
-
-
-
-
 export default class FullPagePaginator {
   // thanks  @akella for prototype
   constructor(settings) {
@@ -113,7 +109,6 @@ export default class FullPagePaginator {
       referenceNode.parentNode.insertBefore(el, referenceNode.nextSibling);
     }
 
-
     insertAfter(nav,w);
 
   }
@@ -127,7 +122,6 @@ export default class FullPagePaginator {
 
     if (pIt.length===0) return;
 
- 
     let it = [].slice.call(pIt[0].children);
 
     it.forEach(function(e, i) {
@@ -151,7 +145,6 @@ export default class FullPagePaginator {
    
   }
 
-
   throttle(func, wait = 100) {
 
     let timer = null;
@@ -171,7 +164,6 @@ export default class FullPagePaginator {
     let self = this;
 
     let delay=this.scroll.delay;
-
 
     const throttled = self.throttle(scrollToSection, delay);
     window.addEventListener('wheel', throttled);
@@ -206,15 +198,13 @@ export default class FullPagePaginator {
       self.section.current = self.section.next;
       self.scroll.permission = true;
 
-    }
-   
+    } 
 
   }
 
   animateTransitions() {
 
     let self = this;
-
 
     self.animateScroll({
       from: self.section.current,
@@ -232,13 +222,10 @@ export default class FullPagePaginator {
 
       });
     }
-
    
   }
 
   animateScroll(data) {
- 
-
 
     let self=this;
 
@@ -260,7 +247,6 @@ export default class FullPagePaginator {
       return r;
 
     }
-
 
 
     let currentSection = filterSection(sections, 'data-scroll', from);
@@ -316,10 +302,6 @@ export default class FullPagePaginator {
   }
 
 
-
-
-
-
   animateFadeOut(target, direction) {
 
     if (direction > 0) {
@@ -336,7 +318,7 @@ export default class FullPagePaginator {
     
   }
   
-
+  
   animateFadeIn(target, direction) {
    
     let self =this;
@@ -381,7 +363,6 @@ export default class FullPagePaginator {
     
   }
 
-
   pushDownNext(current) {
 
     let target = current;
@@ -400,8 +381,6 @@ export default class FullPagePaginator {
     let siblingsNext = getNextSiblings(target);
 
     siblingsNext;
-
-   
 
     siblingsNext.forEach(function(el) {
 
@@ -455,7 +434,6 @@ export default class FullPagePaginator {
 
     });
 
-
     function clickToSection(event) {
 
       event.preventDefault();
@@ -470,17 +448,13 @@ export default class FullPagePaginator {
       let targetData = target.getAttribute(self.nav.itemData);
 
       let targetNumeral=+targetData;
-      console.log(targetNumeral);
+      // console.log(targetNumeral);
 
       self.goToSection(targetNumeral);
 
-
-
     }
 
-
   }
-
 
 
   goToSection(t) {
@@ -511,14 +485,8 @@ export default class FullPagePaginator {
       self.section.current = self.section.next;
 
       // console.log(self.section.next, self.section.current);
-
-
     }
 
     self.scroll.permission = true;
   }
-
-
-
-
 }
