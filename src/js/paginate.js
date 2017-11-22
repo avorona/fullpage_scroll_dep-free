@@ -75,7 +75,11 @@ export default class FullPagePaginator {
 
         self.navItem = navItem;
 
-      } 
+      } else if (self.nav.generate && !self.nav.base) {
+
+        throw new Error( 'turn nav option in the initialize to true');
+
+      }
 
     } 
 
@@ -87,7 +91,7 @@ export default class FullPagePaginator {
 
     let self=this;
 
-    let w=wrapper;
+    let w = wrapper;
 
     let nav = document.createElement('nav');
     nav.classList.add('pagination');
@@ -104,7 +108,13 @@ export default class FullPagePaginator {
 
     nav.appendChild(list);
     // console.log(sectionParent, nav, list);
-    w.appendChild(nav);
+
+    function insertAfter(el, referenceNode) {
+      referenceNode.parentNode.insertBefore(el, referenceNode.nextSibling);
+    }
+
+
+    insertAfter(nav,w);
 
   }
 
@@ -144,7 +154,6 @@ export default class FullPagePaginator {
 
   throttle(func, wait = 100) {
 
-
     let timer = null;
     return function(...args) {
       if (timer === null) {
@@ -167,9 +176,6 @@ export default class FullPagePaginator {
     const throttled = self.throttle(scrollToSection, delay);
     window.addEventListener('wheel', throttled);
   
-
-
-
     function scrollToSection(event) {
       
       // console.log(self.scroll.permission);
@@ -232,6 +238,8 @@ export default class FullPagePaginator {
 
   animateScroll(data) {
  
+
+
     let self=this;
 
     let from = data.from;
@@ -253,6 +261,8 @@ export default class FullPagePaginator {
 
     }
 
+
+
     let currentSection = filterSection(sections, 'data-scroll', from);
 
     let nextSection = filterSection(sections, 'data-scroll', to);
@@ -261,42 +271,75 @@ export default class FullPagePaginator {
     // console.log(currentSection, nextSection);
     let direction = self.scroll.direction;
 
-    self.animateFadeOut(currentSection,direction);
-    self.animateFadeIn(nextSection,direction);
+    new Promise((resolve, reject) => {
 
+      self.showMsgOnStart();
+      // console.log('1');
+
+      resolve();
+
+    })
+      .then(() => {
+
+        self.animateFadeOut(currentSection, direction);
+        // console.log('2');
+
+      })
+      
+      .then(() => {
+
+        self.animateFadeIn(nextSection, direction);  
+        // console.log('3');
+
+      })
+      .then(() => {
+        setTimeout( function() {
+
+          self.showMsgOnEnd();
+
+        }, self.scroll.delay);
+        // console.log('4');
+
+      });
 
   }
 
-  animateFadeOut(target, direction) {
-   
+  showMsgOnStart() {
+    alert('start');
 
+    return true;
+  }
+  showMsgOnEnd() {
+    alert('end');
+
+    return true;
+  }
+
+
+
+
+
+
+  animateFadeOut(target, direction) {
 
     if (direction > 0) {
 
       target.style.top = '-100%';
 
-
     } else if (direction < 0) {
 
       target.style.top = '100%';
 
-
     }
 
     target.classList.toggle('is-active');
-  
     
-
   }
   
+
   animateFadeIn(target, direction) {
    
-
-
-   
-
-    // console.log(direction);
-    // target.style.top = '100%';
+    let self =this;
 
     if (direction>0) {
 
@@ -309,65 +352,77 @@ export default class FullPagePaginator {
 
     }
 
-
     target.classList.add('is-active');
 
-    (function recursiveForNext(target) {
-      console.log(target);
-
-      let nextSib = target.nextElementSibling;
-
-      if (nextSib !== null) {
-
-        nextSib.style.top = '100%';
-
-      } else {
-        return;
-      }
-        
-      
-      recursiveForNext(nextSib);
-
-    })();
-
-    (function recursiveForPrev(target) {
-      
-      console.log(target);
-
-      let prevSib = target.previousElementSibling;
-
-      if (prevSib !== null) {
-        prevSib.style.top = '-100%';
-
-      } else {
-        
-        return;
-      }
-      recursiveForPrev(prevSib);
-
-
-    })();
-  
-    
-
+    self.pushUpPrevious(target);
+    self.pushDownNext(target);
 
   }
 
-  animateNav(data) {
+  pushUpPrevious(current) {
 
+    let target=current; 
+
+    function getPreviousSiblings(el, filter) { // filter is optional
+
+      let siblings = [];
+      while (el = el.previousElementSibling) { if (!filter || filter(el)) siblings.push(el); }
+      return siblings;
+
+    }
+
+    let siblingsPrev = getPreviousSiblings(target);
+
+    siblingsPrev.forEach(function(el) {
+
+      el.style.top = '-100%';
+
+    });
     
+  }
+
+
+  pushDownNext(current) {
+
+    let target = current;
+
+    function getNextSiblings(el, filter) { // filter is optional
+
+      let siblings = [];
+
+      while (el = el.nextElementSibling) {
+        if (!filter || filter(el)) siblings.push(el);
+      }
+
+      return siblings;
+    }
+
+    let siblingsNext = getNextSiblings(target);
+
+    siblingsNext;
+
+   
+
+    siblingsNext.forEach(function(el) {
+
+      el.style.top = '100%';
+
+    });
+
+  }
+
+
+  animateNav(data) {
 
     let pagSelector = data.selector;
 
     let pagLinks = [].slice.call(document.querySelectorAll(pagSelector));
-    //   console.log(pagLinks);
 
     pagLinks.forEach(function(el) {
 
       el.classList.remove('is-active');
 
     });
-
 
     let pagLinkActive = pagLinks.find(function(el) {
 
@@ -380,7 +435,6 @@ export default class FullPagePaginator {
     pagLinkActive.classList.add('is-active');
 
   }
-
 
 
   clickEvent() {
@@ -411,53 +465,59 @@ export default class FullPagePaginator {
       self.scroll.permission = false;
 
       let target = event.target;
-      // console.log(event);
+     
 
       let targetData = target.getAttribute(self.nav.itemData);
 
-      self.section.next = +targetData;
+      let targetNumeral=+targetData;
+      console.log(targetNumeral);
 
-      if (self.section.next !== self.section.current) {
-
-        // console.log(self.section.next, self.section.current);
-
-        if (self.section.current > self.section.next) {
+      self.goToSection(targetNumeral);
 
 
-          self.scroll.direction = -1;
-
-        } else {
-
-          self.scroll.direction = 1;
-
-        }
-
-        
-
-
-
-
-        
-
-
-
-
-        self.animateTransitions();
-
-     
-        self.section.current = self.section.next;
-
-        // console.log(self.section.next, self.section.current);
-
-
-      }
-
-      self.scroll.permission = true;
 
     }
 
 
   }
+
+
+
+  goToSection(t) {
+
+    let targetData=t;
+
+    let self=this;
+
+    self.section.next = targetData;
+
+    if (self.section.next !== self.section.current) {
+
+      // console.log(self.section.next, self.section.current);
+
+      if (self.section.current > self.section.next) {
+
+
+        self.scroll.direction = -1;
+
+      } else {
+
+        self.scroll.direction = 1;
+
+      }
+
+      self.animateTransitions();
+
+      self.section.current = self.section.next;
+
+      // console.log(self.section.next, self.section.current);
+
+
+    }
+
+    self.scroll.permission = true;
+  }
+
 
 
 

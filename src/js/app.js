@@ -3,8 +3,9 @@ import FullPagePaginator from './paginate';
 
 let fpS = new FullPagePaginator({
 
+
   sectionToScrollParent: '.js-fp-scroll',
-  scrollDelay: 2000,
+  scrollDelay: 1000,
   initalPermission: true,
   nav: true,
   generateNav: false,
@@ -13,3 +14,8 @@ let fpS = new FullPagePaginator({
 
 });
 
+// document.addEventListener('click', function() {
+
+//   fpS.goToSection(2);
+
+// });
