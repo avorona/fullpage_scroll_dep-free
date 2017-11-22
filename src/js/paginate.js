@@ -268,7 +268,8 @@ export default class FullPagePaginator {
   }
 
   animateFadeOut(target, direction) {
-    console.log(direction);
+   
+
 
     if (direction > 0) {
 
@@ -283,12 +284,19 @@ export default class FullPagePaginator {
     }
 
     target.classList.toggle('is-active');
+  
     
+
   }
   
   animateFadeIn(target, direction) {
+   
 
-    console.log(direction);
+
+   
+
+    // console.log(direction);
+    // target.style.top = '100%';
 
     if (direction>0) {
 
@@ -299,11 +307,47 @@ export default class FullPagePaginator {
 
       target.style.top = '0';
 
-
     }
 
 
     target.classList.add('is-active');
+
+    (function recursiveForNext(target) {
+      console.log(target);
+
+      let nextSib = target.nextElementSibling;
+
+      if (nextSib !== null) {
+
+        nextSib.style.top = '100%';
+
+      } else {
+        return;
+      }
+        
+      
+      recursiveForNext(nextSib);
+
+    })();
+
+    (function recursiveForPrev(target) {
+      
+      console.log(target);
+
+      let prevSib = target.previousElementSibling;
+
+      if (prevSib !== null) {
+        prevSib.style.top = '-100%';
+
+      } else {
+        
+        return;
+      }
+      recursiveForPrev(prevSib);
+
+
+    })();
+  
     
 
 
