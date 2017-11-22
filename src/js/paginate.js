@@ -93,12 +93,12 @@ export default class FullPagePaginator {
     nav.classList.add('pagination');
     let list = document.createElement('div');
     list.classList.add('pagination__list', 'js-fp-nav');
-
+    list.setAttribute('tabIndex', '0');
     for (let j = 0; j < self.section.amount; j++) {
 
       let item = document.createElement('button');
       item.classList.add('pagination__item');
-      item.tabIndex= '2';
+      item.setAttribute('tabIndex', '0');
 
       list.appendChild(item);
     }

@@ -8,7 +8,7 @@ let fpS = new FullPagePaginator({
   scrollDelay: 1000,
   initalPermission: true,
   nav: true,
-  generateNav: false,
+  generateNav: true,
   triggersToNav: false
 
 
