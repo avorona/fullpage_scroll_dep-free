@@ -7,7 +7,9 @@
     "start": "gulp",
     "precommit": "lint-staged",
     "lint": "eslint --ignore-pattern 'src/js/lib/' --cache --format=node_modules/eslint-formatter-pretty src/js/",
-    "lint-fix": "npm run lint -- --fix"
+    "lint-fix": "npm run lint -- --fix",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "lint-staged": {
     "src/templates/**/*.html": [
@@ -72,6 +74,8 @@
   },
   "dependencies": {
     "lodash": "^4.17.4",
-    "lodash.throttle": "^4.1.1"
-  }
+    "lodash.throttle": "^4.1.1",
+    "snyk": "^1.189.0"
+  },
+  "snyk": true
 }
